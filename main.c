@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define RANDOM_INT(min, max)                                                   \
+  (min) + rand() / (RAND_MAX / ((max) - (min) + 1) + 1)
+
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 Mix_Chunk *ball_paddle_collision_sfx = NULL;
@@ -266,30 +269,15 @@ void init() {
     exit(EXIT_FAILURE);
   }
 }
-void event_loop() {
+void event_loop(game_state_t *game_state) {
   SDL_Event event;
-  game_state_t initial_game_state = {
-      .left_player = {.paddle =
-                          {
-                              .vertical_position = WINDOW_HEIGHT / 2.0,
-                          },
-                      .score = 0},
-      .right_player = {.paddle =
-                           {
-                               .vertical_position = WINDOW_HEIGHT / 2.0,
-                           },
-                       .score = 0},
-      .ball = {.position = {WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0},
-               .velocity = {-4, 1}},
-      .running_state = RUNNING_STATE};
-
-  while (initial_game_state.running_state != QUIT_STATE) {
+  while (game_state->running_state != QUIT_STATE) {
     SDL_KeyCode key = SDLK_DOLLAR;
 
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
-        initial_game_state.running_state = QUIT_STATE;
+        game_state->running_state = QUIT_STATE;
         break;
       case SDL_KEYDOWN:
         key = event.key.keysym.sym;
@@ -298,18 +286,18 @@ void event_loop() {
       }
       }
     }
-    advance_game_state(&initial_game_state, key);
+    advance_game_state(game_state, key);
 
-    printf("left player's score: %d\n", initial_game_state.left_player.score);
-    printf("right player's score: %d\n", initial_game_state.right_player.score);
+    printf("left player's score: %d\n", game_state->left_player.score);
+    printf("right player's score: %d\n", game_state->right_player.score);
 
-    render_game(&initial_game_state, renderer);
+    render_game(game_state, renderer);
   }
   char *winner = "no winner";
 
-  if (initial_game_state.running_state == LEFT_PLAYER_WON)
+  if (game_state->running_state == LEFT_PLAYER_WON)
     winner = "left";
-  else if (initial_game_state.running_state == RIGHT_PLAYER_WON)
+  else if (game_state->running_state == RIGHT_PLAYER_WON)
     winner = "right";
 
   printf("Winner is: %s", winner);
@@ -335,8 +323,26 @@ void quit() {
 }
 
 int main(void) {
+  static game_state_t initial_game_state = {
+      .left_player = {.paddle =
+                          {
+                              .vertical_position = WINDOW_HEIGHT / 2.0,
+                          },
+                      .score = 0},
+      .right_player = {.paddle =
+                           {
+                               .vertical_position = WINDOW_HEIGHT / 2.0,
+                           },
+                       .score = 0},
+      .ball = {.position = {WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0},
+               .velocity = {0, 0}},
+      .running_state = RUNNING_STATE};
+
+  initial_game_state.ball.velocity[0] = RANDOM_INT(-5, 5);
+  initial_game_state.ball.velocity[1] = RANDOM_INT(-5, 5);
+
   init();
-  event_loop();
+  event_loop(&initial_game_state);
   clean();
   quit();
 
