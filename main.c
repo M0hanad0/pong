@@ -1,3 +1,4 @@
+#include "main.h"
 #include "game.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
@@ -22,92 +23,6 @@ Mix_Chunk *ball_boundaries_collision_sfx = NULL;
 Mix_Chunk *ball_score_sfx = NULL;
 TTF_Font *font = NULL;
 
-void clean() {
-  Mix_FreeChunk(ball_boundaries_collision_sfx);
-  Mix_FreeChunk(ball_paddle_collision_sfx);
-
-  ball_boundaries_collision_sfx = NULL;
-  ball_paddle_collision_sfx = NULL;
-
-  SDL_DestroyRenderer(renderer);
-  renderer = NULL;
-  SDL_DestroyWindow(window);
-  window = NULL;
-}
-
-void init() {
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-    fprintf(stderr, "ERROR: Could not initialize SDL: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if (Mix_Init(MIX_INIT_MP3) == 0) {
-    fprintf(stderr, "ERROR: Could not initialize SDL_mixer: %s",
-            SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-    fprintf(stderr, "ERROR: Could not open audio device: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-  if (TTF_Init() < 0) {
-    fprintf(stderr, "ERROR: Could not initialize SDL2_TTF: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  window =
-      SDL_CreateWindow("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                       WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-
-  if (window == NULL) {
-    clean();
-    fprintf(stderr, "ERROR: Could not create the main window: %s",
-            SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-  if (renderer == NULL) {
-    clean();
-    fprintf(stderr, "ERROR: Could not create a renderer: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  font = TTF_OpenFont("./assets/digital-7.ttf", 100);
-  if (font == NULL) {
-    clean();
-    fprintf(stderr, "ERROR: Could not open a font: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  ball_boundaries_collision_sfx = Mix_LoadWAV("./assets/wall.wav");
-  if (ball_boundaries_collision_sfx == NULL) {
-    clean();
-    fprintf(stderr,
-            "ERROR: Could not load ball collision with boundaries sfx: %s",
-            SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  ball_paddle_collision_sfx = Mix_LoadWAV("./assets/paddle.wav");
-  if (ball_paddle_collision_sfx == NULL) {
-    clean();
-    fprintf(stderr, "ERROR: Could not load ball collision with paddle sfx: %s",
-            SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-
-  ball_score_sfx = Mix_LoadWAV("./assets/score.wav");
-  if (ball_score_sfx == NULL) {
-    clean();
-    fprintf(stderr, "ERROR: Could not load ball score sfx: %s", SDL_GetError());
-    exit(EXIT_FAILURE);
-  }
-}
-
 SDL_Rect construct_rect_from_left_paddle(paddle_t paddle) {
 
   SDL_Rect left_paddle = {.x = PADDLE_HORIZONTAL_PADDING,
@@ -116,7 +31,6 @@ SDL_Rect construct_rect_from_left_paddle(paddle_t paddle) {
                           .h = PADDLE_HEIGHT};
   return left_paddle;
 }
-
 SDL_Rect construct_rect_from_right_paddle(paddle_t paddle) {
 
   SDL_Rect right_paddle = {.x = WINDOW_WIDTH - PADDLE_WIDTH -
@@ -127,7 +41,6 @@ SDL_Rect construct_rect_from_right_paddle(paddle_t paddle) {
 
   return right_paddle;
 }
-
 SDL_Rect construct_ball_rect(ball_t ball) {
   SDL_Rect ball_rect = {.x = ball.position[0],
                         .y = ball.position[1],
@@ -226,7 +139,6 @@ void advance_game_state(game_state_t *game, SDL_KeyCode keycode) {
   }
   }
 }
-
 void render_game(const game_state_t *game, SDL_Renderer *renderer) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
@@ -282,6 +194,78 @@ void render_game(const game_state_t *game, SDL_Renderer *renderer) {
   free(rh);
 }
 
+void init() {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+    fprintf(stderr, "ERROR: Could not initialize SDL: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if (Mix_Init(MIX_INIT_MP3) == 0) {
+    fprintf(stderr, "ERROR: Could not initialize SDL_mixer: %s",
+            SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    fprintf(stderr, "ERROR: Could not open audio device: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+  if (TTF_Init() < 0) {
+    fprintf(stderr, "ERROR: Could not initialize SDL2_TTF: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  window =
+      SDL_CreateWindow("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                       WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+
+  if (window == NULL) {
+    clean();
+    fprintf(stderr, "ERROR: Could not create the main window: %s",
+            SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  renderer = SDL_CreateRenderer(
+      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+  if (renderer == NULL) {
+    clean();
+    fprintf(stderr, "ERROR: Could not create a renderer: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  font = TTF_OpenFont("./assets/digital-7.ttf", 100);
+  if (font == NULL) {
+    clean();
+    fprintf(stderr, "ERROR: Could not open a font: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  ball_boundaries_collision_sfx = Mix_LoadWAV("./assets/wall.wav");
+  if (ball_boundaries_collision_sfx == NULL) {
+    clean();
+    fprintf(stderr,
+            "ERROR: Could not load ball collision with boundaries sfx: %s",
+            SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  ball_paddle_collision_sfx = Mix_LoadWAV("./assets/paddle.wav");
+  if (ball_paddle_collision_sfx == NULL) {
+    clean();
+    fprintf(stderr, "ERROR: Could not load ball collision with paddle sfx: %s",
+            SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+
+  ball_score_sfx = Mix_LoadWAV("./assets/score.wav");
+  if (ball_score_sfx == NULL) {
+    clean();
+    fprintf(stderr, "ERROR: Could not load ball score sfx: %s", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+}
 void event_loop() {
   SDL_Event event;
   game_state_t initial_game_state = {
@@ -330,7 +314,18 @@ void event_loop() {
 
   printf("Winner is: %s", winner);
 }
+void clean() {
+  Mix_FreeChunk(ball_boundaries_collision_sfx);
+  Mix_FreeChunk(ball_paddle_collision_sfx);
 
+  ball_boundaries_collision_sfx = NULL;
+  ball_paddle_collision_sfx = NULL;
+
+  SDL_DestroyRenderer(renderer);
+  renderer = NULL;
+  SDL_DestroyWindow(window);
+  window = NULL;
+}
 void quit() {
   Mix_Quit();
   SDL_Quit();
