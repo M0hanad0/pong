@@ -317,12 +317,15 @@ void event_loop() {
 void clean() {
   Mix_FreeChunk(ball_boundaries_collision_sfx);
   Mix_FreeChunk(ball_paddle_collision_sfx);
+  Mix_FreeChunk(ball_score_sfx);
 
   ball_boundaries_collision_sfx = NULL;
   ball_paddle_collision_sfx = NULL;
+  ball_score_sfx = NULL;
 
   SDL_DestroyRenderer(renderer);
   renderer = NULL;
+
   SDL_DestroyWindow(window);
   window = NULL;
 }
