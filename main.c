@@ -136,7 +136,7 @@ SDL_Rect construct_ball_rect(ball_t ball) {
   return ball_rect;
 }
 
-void advance_game_state(game_t *game, SDL_KeyCode keycode) {
+void advance_game_state(game_state_t *game, SDL_KeyCode keycode) {
   switch (game->running_state) {
   case LEFT_PLAYER_WON:
     return;
@@ -149,33 +149,33 @@ void advance_game_state(game_t *game, SDL_KeyCode keycode) {
       break;
 
     case SDLK_UP:
-      if (game->left_player.paddle.vertical_position > WINDOW_HEIGHT)
-        game->left_player.paddle.vertical_position = 0;
-      else if (game->left_player.paddle.vertical_position < 0)
-        game->left_player.paddle.vertical_position = WINDOW_HEIGHT;
-      game->left_player.paddle.vertical_position -= PADDLE_VELOCITY;
-      break;
-    case SDLK_DOWN:
-      if (game->left_player.paddle.vertical_position > WINDOW_HEIGHT)
-        game->left_player.paddle.vertical_position = 0;
-      else if (game->left_player.paddle.vertical_position < 0)
-        game->left_player.paddle.vertical_position = WINDOW_HEIGHT;
-      game->left_player.paddle.vertical_position += PADDLE_VELOCITY;
-      break;
-
-    case SDLK_w:
       if (game->right_player.paddle.vertical_position > WINDOW_HEIGHT)
         game->right_player.paddle.vertical_position = 0;
       else if (game->right_player.paddle.vertical_position < 0)
         game->right_player.paddle.vertical_position = WINDOW_HEIGHT;
       game->right_player.paddle.vertical_position -= PADDLE_VELOCITY;
       break;
-    case SDLK_s:
+    case SDLK_DOWN:
       if (game->right_player.paddle.vertical_position > WINDOW_HEIGHT)
         game->right_player.paddle.vertical_position = 0;
       else if (game->right_player.paddle.vertical_position < 0)
         game->right_player.paddle.vertical_position = WINDOW_HEIGHT;
       game->right_player.paddle.vertical_position += PADDLE_VELOCITY;
+      break;
+
+    case SDLK_w:
+      if (game->left_player.paddle.vertical_position > WINDOW_HEIGHT)
+        game->left_player.paddle.vertical_position = 0;
+      else if (game->left_player.paddle.vertical_position < 0)
+        game->left_player.paddle.vertical_position = WINDOW_HEIGHT;
+      game->left_player.paddle.vertical_position -= PADDLE_VELOCITY;
+      break;
+    case SDLK_s:
+      if (game->left_player.paddle.vertical_position > WINDOW_HEIGHT)
+        game->left_player.paddle.vertical_position = 0;
+      else if (game->left_player.paddle.vertical_position < 0)
+        game->left_player.paddle.vertical_position = WINDOW_HEIGHT;
+      game->left_player.paddle.vertical_position += PADDLE_VELOCITY;
       break;
 
     default: {
@@ -227,7 +227,7 @@ void advance_game_state(game_t *game, SDL_KeyCode keycode) {
   }
 }
 
-void render_game(const game_t *game, SDL_Renderer *renderer) {
+void render_game(const game_state_t *game, SDL_Renderer *renderer) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
@@ -282,11 +282,9 @@ void render_game(const game_t *game, SDL_Renderer *renderer) {
   free(rh);
 }
 
-int main(void) {
-  init();
-
+void event_loop() {
   SDL_Event event;
-  game_t game = {
+  game_state_t initial_game_state = {
       .left_player = {.paddle =
                           {
                               .vertical_position = WINDOW_HEIGHT / 2.0,
@@ -301,13 +299,13 @@ int main(void) {
                .velocity = {-4, 1}},
       .running_state = RUNNING_STATE};
 
-  while (game.running_state != QUIT_STATE) {
+  while (initial_game_state.running_state != QUIT_STATE) {
     SDL_KeyCode key = SDLK_DOLLAR;
 
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
-        game.running_state = QUIT_STATE;
+        initial_game_state.running_state = QUIT_STATE;
         break;
       case SDL_KEYDOWN:
         key = event.key.keysym.sym;
@@ -316,25 +314,33 @@ int main(void) {
       }
       }
     }
-    advance_game_state(&game, key);
+    advance_game_state(&initial_game_state, key);
 
-    printf("left player's score: %d\n", game.left_player.score);
-    printf("right player's score: %d\n", game.right_player.score);
+    printf("left player's score: %d\n", initial_game_state.left_player.score);
+    printf("right player's score: %d\n", initial_game_state.right_player.score);
 
-    render_game(&game, renderer);
+    render_game(&initial_game_state, renderer);
   }
-
   char *winner = "no winner";
 
-  if (game.running_state == LEFT_PLAYER_WON)
+  if (initial_game_state.running_state == LEFT_PLAYER_WON)
     winner = "left";
-  else if (game.running_state == RIGHT_PLAYER_WON)
+  else if (initial_game_state.running_state == RIGHT_PLAYER_WON)
     winner = "right";
 
   printf("Winner is: %s", winner);
+}
 
-  clean();
+void quit() {
   Mix_Quit();
   SDL_Quit();
+}
+
+int main(void) {
+  init();
+  event_loop();
+  clean();
+  quit();
+
   return 0;
 }

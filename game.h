@@ -40,6 +40,6 @@ typedef struct {
   player_t right_player;
   ball_t ball;
   running_state_t running_state;
-} game_t;
+} game_state_t;
 
 #endif // GAME_H_
