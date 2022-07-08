@@ -76,14 +76,14 @@ void init() {
     exit(EXIT_FAILURE);
   }
 
-  font = TTF_OpenFont("./digital-7.ttf", 100);
+  font = TTF_OpenFont("./assets/digital-7.ttf", 100);
   if (font == NULL) {
     clean();
     fprintf(stderr, "ERROR: Could not open a font: %s", SDL_GetError());
     exit(EXIT_FAILURE);
   }
 
-  ball_boundaries_collision_sfx = Mix_LoadWAV("./wall.wav");
+  ball_boundaries_collision_sfx = Mix_LoadWAV("./assets/wall.wav");
   if (ball_boundaries_collision_sfx == NULL) {
     clean();
     fprintf(stderr,
@@ -92,7 +92,7 @@ void init() {
     exit(EXIT_FAILURE);
   }
 
-  ball_paddle_collision_sfx = Mix_LoadWAV("./paddle.wav");
+  ball_paddle_collision_sfx = Mix_LoadWAV("./assets/paddle.wav");
   if (ball_paddle_collision_sfx == NULL) {
     clean();
     fprintf(stderr, "ERROR: Could not load ball collision with paddle sfx: %s",
@@ -100,7 +100,7 @@ void init() {
     exit(EXIT_FAILURE);
   }
 
-  ball_score_sfx = Mix_LoadWAV("./score.wav");
+  ball_score_sfx = Mix_LoadWAV("./assets/score.wav");
   if (ball_score_sfx == NULL) {
     clean();
     fprintf(stderr, "ERROR: Could not load ball score sfx: %s", SDL_GetError());
