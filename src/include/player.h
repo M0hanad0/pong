@@ -2,7 +2,7 @@
 #define PLAYER_H_
 #include "paddle.h"
 
-#define MAX_SCORE 10
+#define MAX_SCORE 11
 
 typedef struct {
   paddle_t paddle;
