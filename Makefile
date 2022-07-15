@@ -23,9 +23,14 @@ all: $(BINARY)
 clean:
 	rm -f $(BINARY) $(OBJECTS) $(DEPENDENCY_FILES)
 
+package: clean
+	tar vczf dist.tgz *
+
 $(BINARY): $(OBJECTS)
 	$(CC) $(CFLAGS) -o bin/$@ $^
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+-include $(DEPENDENCY_FILES)
 # end
