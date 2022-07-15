@@ -1,7 +1,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include "game.h"
+#include "include/game.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 

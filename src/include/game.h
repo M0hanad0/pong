@@ -1,8 +1,8 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include "ball.h"
-#include "paddle.h"
+#include "../ball.h"
+#include "../paddle.h"
 #include "player.h"
 
 typedef enum {

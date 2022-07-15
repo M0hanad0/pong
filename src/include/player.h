@@ -1,6 +1,6 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
-#include "paddle.h"
+#include "../paddle.h"
 
 #define MAX_SCORE 11
 
