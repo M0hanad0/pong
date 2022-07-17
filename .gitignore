@@ -7,3 +7,6 @@ bin/
 *.o
 *.d
 *.tgz
+
+compile-commands.json
+.cache/
