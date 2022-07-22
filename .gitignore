@@ -8,5 +8,5 @@ bin/
 *.d
 *.tgz
 
-compile-commands.json
+compile_commands.json
 .cache/
