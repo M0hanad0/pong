@@ -154,7 +154,7 @@ void render_game(const game_state_t *game, SDL_Renderer *renderer) {
   SDL_RenderPresent(renderer);
 }
 
-void init() {
+void init(void) {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
     fprintf(stderr, "ERROR: Could not initialize SDL: %s", SDL_GetError());
     exit(EXIT_FAILURE);
@@ -253,7 +253,7 @@ void event_loop(game_state_t *game_state) {
 
   printf("Winner is: %s", winner);
 }
-void clean() {
+void clean(void) {
   Mix_FreeChunk(ball_boundaries_collision_sfx);
   Mix_FreeChunk(ball_paddle_collision_sfx);
   Mix_FreeChunk(ball_score_sfx);
@@ -268,7 +268,7 @@ void clean() {
   SDL_DestroyWindow(window);
   window = NULL;
 }
-void quit() {
+void quit(void) {
   Mix_Quit();
   SDL_Quit();
 }
